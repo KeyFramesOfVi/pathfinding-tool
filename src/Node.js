@@ -7,7 +7,6 @@ const Node = (props) => (
     draggable={props.start || props.goal ? 'true' : 'none'}
     onDragStart={props.dragStart}
     onDragEnter={props.dragEnter}
-    onDragOver={(event) => { event.preventDefault(); }}
     onMouseDown={() => false}
     style={{
       position: 'absolute',
@@ -19,7 +18,7 @@ const Node = (props) => (
       height: '30px',
       background: props.start ? '#4fd24f' :
                   props.goal ? '#ff2020' :
-                  props.path ? '#38eeff' :
+                  props.current ? '#38eeff' :
                   props.open ? '#42ff7f' : '#efe7e5',
       opacity: 0.8,
       borderStyle: 'dotted',

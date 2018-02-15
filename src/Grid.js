@@ -16,7 +16,7 @@ const Grid = props => (
         top={node.y}
         start={props.start === node}
         goal={props.goal === node}
-        path={props.path ? props.path.some(id => id === node.id) : false}
+        current={props.current ? true : false}
         open={node.open}
         f={node.f}
         g={node.g}

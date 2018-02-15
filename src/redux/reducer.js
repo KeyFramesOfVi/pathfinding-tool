@@ -7,8 +7,9 @@ import height from './modules/height';
 import start from './modules/start';
 import goal from './modules/goal';
 import borders from './modules/borders';
-import path from './modules/path';
+import current from './modules/current';
 import counter from './modules/counter';
+import time from './modules/time';
 
 export default combineReducers({
   nodes,
@@ -19,6 +20,7 @@ export default combineReducers({
   start,
   goal,
   borders,
-  path,
+  current,
   counter,
+  time,
 });

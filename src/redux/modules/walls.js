@@ -9,7 +9,7 @@ export default (state = [], action) => {
       x2,
       y2,
     } = action.borders;
-    return [
+    return [[
       createWall(1, 14, 632, 14, action.bufferSize),
       createWall(1, 14, 1, 555, action.bufferSize),
       createWall(632, 14, 632, 555, action.bufferSize),
@@ -22,13 +22,13 @@ export default (state = [], action) => {
       createWall(315, 336, 520, 336, action.bufferSize),
       createWall(315, 206, 422, 206, action.bufferSize),
       createWall(422, 14, 422, 206, action.bufferSize),
-    ];
-    // return [
+    ]];
+    // return [[
     //   createWall(x1, y1, x2, y1, action.bufferSize),
     //   createWall(x1, y1, x1, y2, action.bufferSize),
     //   createWall(x2, y1, x2, y2, action.bufferSize),
     //   createWall(x1, y2, x2, y2, action.bufferSize),
-    // ];
+    // ]];
   } else if (action.type === 'CREATE_WALL') {
     return [...state, createWall(
       action.x1,
