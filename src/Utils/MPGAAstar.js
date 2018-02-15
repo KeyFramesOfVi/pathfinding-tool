@@ -52,6 +52,7 @@ const Astar = (nodes, start, goal, counter) => {
   while (!open.isEmpty()) {
     const current = open.poll();
     if (goalCondition(current, goal)) {
+      console.log(current.next);
       return current;
     }
     closedList.push(current);
