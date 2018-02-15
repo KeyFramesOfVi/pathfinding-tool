@@ -52,13 +52,13 @@ const Astar = (nodes, start, goal, counter) => {
   while (!open.isEmpty()) {
     const current = open.poll();
     if (goalCondition(current, goal)) {
-      console.log(current.next);
       return current;
     }
     closedList.push(current);
     current.neighbors.forEach((neighbor) => {
       const currNeighbor = nodes[neighbor];
       initializeState(currNeighbor, counter);
+      console.log(`current: ${current.id} and currNeighbor: ${currNeighbor.id} cost is ${getCostTo(current, currNeighbor)}`);
       if (currNeighbor.g > current.g + getCostTo(current, currNeighbor)) {
         currNeighbor.g = current.g + getCostTo(current, currNeighbor);
         currNeighbor.h = octileHeuristic(currNeighbor, goal);
@@ -78,6 +78,7 @@ const buildPath = (current, start) => {
   while (node !== start) {
     node.parent.next = node;
     node = node.parent;
+    node.path = true;
   }
 };
 
@@ -164,6 +165,7 @@ const observe = (current, nodes, edges, walls) => {
     const upLeft = node.id + (i * vertical) - (i * horizontal);
     const downLeft = node.id - (i * vertical) - (i * horizontal);
     const downRight = node.id - (i * vertical) + (i * horizontal);
+    // console.log(`up: ${up} down: ${down} left:${left} right:${right}`);
     if (up > 0 && up < nodes.length) {
       update(nodes[up], decreasedEdges, nodes, edges, walls);
     }
@@ -197,13 +199,18 @@ const observe = (current, nodes, edges, walls) => {
   return costChange;
 };
 
-const observePath = (nodes, edges, walls, current, goal) => {
+const observePath = (nodes, edges, walls, current) => {
   let _current = current;
-  const _goal = goal;
   const t = _current;
   _current = _current.next;
   t.next = null;
-  return observe(_current, nodes, edges, walls);
+  const change = observe(_current, nodes, edges, walls);
+  return [
+    _current,
+    nodes,
+    edges,
+    change,
+  ];
 };
 
 const createAPath = (nodes, edges, walls, start, goal, counter) => {
@@ -222,7 +229,6 @@ const createAPath = (nodes, edges, walls, start, goal, counter) => {
 const startPath = (hght, prox, nodes, edges, walls, start, goal, counter) => {
   HEIGHT = hght;
   PROXIMITY = prox;
-
   const _start = start;
   observe(_start, nodes, edges, walls);
   for (let i = 0; i < nodes.length; i += 1) {

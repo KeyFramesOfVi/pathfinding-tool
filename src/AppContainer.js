@@ -27,7 +27,6 @@ class AppContainer extends Component {
   mouseDown(event) {
     xStart = event.clientX;
     yStart = event.clientY;
-    console.log(`xBegin: ${xStart} yBegin:${yStart}`);
   }
 
   mouseUp(event) {
@@ -67,7 +66,7 @@ class AppContainer extends Component {
 
   startSearch() {
     const height = this.props.height;
-    const proximity = this.props.proximity;
+    const proximity = 30;
     const start = this.props.start;
     const goal = this.props.goal;
     const curr_node = this.props.start;
@@ -82,7 +81,7 @@ class AppContainer extends Component {
     let edgesStep = cloneDeep(edges[time]);
     let wallsStep = cloneDeep(walls[time]);
     let currentStep = nodesStep[current[time].id];
-    console.log(currentStep);
+    let goalStep = nodesStep[goal.id];
     startPath(
       height,
       proximity,
@@ -90,7 +89,7 @@ class AppContainer extends Component {
       edgesStep,
       wallsStep,
       currentStep,
-      goal,
+      goalStep,
       counter,
     );
     counter += 1;
@@ -98,41 +97,38 @@ class AppContainer extends Component {
     edges = [...edges, edgesStep];
     walls = [...walls, wallsStep];
     current = [...current, currentStep];
-    console.log(current);
     time += 1;
 
     let change = false;
-    while (currentStep !== goal) {
+    while (currentStep !== goalStep) {
       nodesStep = cloneDeep(nodes[time]);
       edgesStep = cloneDeep(edges[time]);
       wallsStep = cloneDeep(walls[time]);
       currentStep = nodesStep[current[time].id];
-      console.log(nodesStep);
-      throw new Error('Just to see');
+      goalStep = nodesStep[goal.id];
       if (!change) {
-        change = observePath(
+        [currentStep, nodesStep, edgesStep, change] = observePath(
           nodesStep,
           edgesStep,
           wallsStep,
           currentStep,
-          goal,
-
         );
       } else {
         createAPath(
           nodesStep,
           edgesStep,
           wallsStep,
-          start,
-          goal,
+          currentStep,
+          goalStep,
           counter,
         );
         counter += 1;
+        change = false;
       }
-      nodes = [...nodes, [nodesStep]];
-      edges = [...edges, [edgesStep]];
-      walls = [...walls, [wallsStep]];
-      current = [...current, [currentStep]];
+      nodes = [...nodes, nodesStep];
+      edges = [...edges, edgesStep];
+      walls = [...walls, wallsStep];
+      current = [...current, currentStep];
       time += 1;
     }
     this.props.startSearch(nodes, edges, walls, current, time);
@@ -146,9 +142,9 @@ class AppContainer extends Component {
         walls={this.props.walls[this.props.time]}
         nodes={this.props.nodes[this.props.time]}
         edges={this.props.edges[this.props.time]}
-        start={this.props.start}
-        goal={this.props.goal}
-        current={this.props.current[this.props.time]}
+        start={this.props.start ? this.props.start.id : -1}
+        goal={this.props.goal ? this.props.goal.id : -1}
+        current={this.props.current ? this.props.current[this.props.time].id : -1}
         allowDrop={this.allowDrop}
         dragStart={this.dragStart}
         dragEnter={this.dragEnter}
@@ -165,7 +161,7 @@ class AppContainer extends Component {
   }
 }
 export default connect(
-  (state) => (
+  (state, { time }) => (
     {
       nodes: state.nodes,
       edges: state.edges,
@@ -204,8 +200,6 @@ export default connect(
           height,
           proximity: 30,
         });
-        dispatch({ type: 'SET_TIME' });
-        state = getState();
         dispatch({ type: 'CREATE_MAP_BORDER', borders: state.borders, bufferSize: 30 });
         dispatch({ type: 'SET_START', nodes: state.nodes, time: state.time });
         dispatch({ type: 'SET_GOAL', nodes: state.nodes, time: state.time });

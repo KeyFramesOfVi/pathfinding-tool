@@ -3,12 +3,12 @@ import { createWall } from '../../Utils/graph';
 
 export default (state = [], action) => {
   if (action.type === 'CREATE_MAP_BORDER') {
-    const {
-      x1,
-      y1,
-      x2,
-      y2,
-    } = action.borders;
+    // const {
+    //   x1,
+    //   y1,
+    //   x2,
+    //   y2,
+    // } = action.borders;
     return [[
       createWall(1, 14, 632, 14, action.bufferSize),
       createWall(1, 14, 1, 555, action.bufferSize),

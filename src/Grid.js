@@ -14,10 +14,11 @@ const Grid = props => (
         id={node.id}
         left={node.x}
         top={node.y}
-        start={props.start === node}
-        goal={props.goal === node}
-        current={props.current ? true : false}
+        start={props.start === node.id}
+        goal={props.goal === node.id}
+        current={props.current.id === node.id}
         open={node.open}
+        path={node.path}
         f={node.f}
         g={node.g}
         h={node.h}

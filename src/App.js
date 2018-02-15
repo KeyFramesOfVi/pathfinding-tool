@@ -15,6 +15,7 @@ const App = props => (
       start={props.start}
       goal={props.goal}
       path={props.path}
+      current={props.current}
       dragStart={props.dragStart}
       dragEnter={props.dragEnter}
       mouseDown={props.mouseDown}

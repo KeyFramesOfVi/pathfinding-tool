@@ -6,10 +6,15 @@ import './index.css';
 import AppContainer from './AppContainer';
 import registerServiceWorker from './registerServiceWorker';
 
+
+let t = 0;
+window.dispatch = store.dispatch;
+
 ReactDOM.render(
   <Provider store={store}>
-    <AppContainer />
+    <AppContainer time={t++}/>
   </Provider>,
   document.getElementById('root'),
 );
+
 registerServiceWorker();

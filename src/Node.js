@@ -18,7 +18,8 @@ const Node = (props) => (
       height: '30px',
       background: props.start ? '#4fd24f' :
                   props.goal ? '#ff2020' :
-                  props.current ? '#38eeff' :
+                  props.current ? 'ffff00' :
+                  props.path ? '#38eeff' :
                   props.open ? '#42ff7f' : '#efe7e5',
       opacity: 0.8,
       borderStyle: 'dotted',

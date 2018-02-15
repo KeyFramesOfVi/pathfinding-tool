@@ -44,6 +44,7 @@ const createNode = (id, x, y) => ({
   next: null,
   support: null,
   open: false,
+  path: false,
 });
 
 
