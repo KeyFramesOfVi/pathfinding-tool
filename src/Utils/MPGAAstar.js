@@ -52,7 +52,6 @@ const Astar = (nodes, start, goal, counter) => {
   while (!open.isEmpty()) {
     const current = open.poll();
     if (goalCondition(current, goal)) {
-      console.log(current.next);
       return current;
     }
     closedList.push(current);
@@ -197,26 +196,19 @@ const observe = (current, nodes, edges, walls) => {
   return costChange;
 };
 
-const observePath = (hght, prox, nodes, edges, walls, start, goal, path) => {
-  let _start = start;
+const observePath = (nodes, edges, walls, current, goal) => {
+  let _current = current;
   const _goal = goal;
-  let change = false;
-  while (!change && (_start !== _goal)) {
-    const t = _start;
-    path.push(_start.id);
-    _start = _start.next;
-    t.next = null;
-    // move agent
-    change = observe(_start, nodes, edges, walls);
-  }
-  change = false;
+  const t = _current;
+  _current = _current.next;
+  t.next = null;
+  return observe(_current, nodes, edges, walls);
 };
 
-const createAPath = (hght, prox, nodes, edges, walls, start, goal, path, counter) => {
+const createAPath = (nodes, edges, walls, start, goal, counter) => {
   counter += 1;
   const _start = start;
-  const _goal = goal;
-  const current = Astar(nodes, _start, _goal, counter);
+  const current = Astar(nodes, _start, goal, counter);
   if (current === null) {
     return null;
   }
@@ -226,19 +218,18 @@ const createAPath = (hght, prox, nodes, edges, walls, start, goal, path, counter
   buildPath(current, _start);
 };
 
-const startPath = (hght, prox, nodes, edges, walls, start, goal, path, counter) => {
+const startPath = (hght, prox, nodes, edges, walls, start, goal, counter) => {
   HEIGHT = hght;
   PROXIMITY = prox;
 
-  let _start = start;
-  const _goal = goal;
+  const _start = start;
   observe(_start, nodes, edges, walls);
   for (let i = 0; i < nodes.length; i += 1) {
     nodes[i].search = 0;
-    nodes[i].h = octileHeuristic(_start, _goal);
+    nodes[i].h = octileHeuristic(_start, goal);
     nodes[i].next = null;
   }
-  createAPath(hght, prox, nodes, edges, walls, start, goal, path);
+  createAPath(nodes, edges, walls, _start, goal, counter);
 };
 
 
