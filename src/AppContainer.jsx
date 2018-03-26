@@ -21,7 +21,7 @@ class AppContainer extends Component {
   mouseDown = event => {
     xStart = event.clientX;
     yStart = event.clientY;
-  }
+  };
 
   mouseUp = event => {
     if (event.target.className === "state") {
@@ -35,7 +35,7 @@ class AppContainer extends Component {
         this.props.createWall(xStart, yStart, xEnd, yStart);
       }
     }
-  }
+  };
   dragStart = event => {
     const img = new Image();
     if (this.props.nodes[event.target.id] === this.props.start) {
@@ -44,7 +44,7 @@ class AppContainer extends Component {
       event.dataTransfer.setData("text/plain", "goal");
     }
     event.dataTransfer.setDragImage(img, -99999, -99999);
-  }
+  };
 
   dragOver = event => {
     event.preventDefault();
@@ -53,7 +53,7 @@ class AppContainer extends Component {
     } else {
       event.dataTransfer.dropEffect = "none";
     }
-  }
+  };
 
   dragEnter = event => {
     event.preventDefault();
@@ -74,7 +74,7 @@ class AppContainer extends Component {
         );
       }
     }
-  }
+  };
 
   drop = event => {
     event.preventDefault();
@@ -90,7 +90,7 @@ class AppContainer extends Component {
       const xDiff = Math.abs(xStart - xEnd);
       const yDiff = Math.abs(yStart - yEnd);
     }
-  }
+  };
 
   render() {
     return (

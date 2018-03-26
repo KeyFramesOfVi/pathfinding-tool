@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Grid from './Grid';
-import GridInput from './GridInput';
-import StartMenu from './StartMenu';
-import './App.css';
+import React from "react";
+import PropTypes from "prop-types";
+import Grid from "./Grid";
+import GridInput from "./GridInput";
+import StartMenu from "./StartMenu";
+import "./App.css";
 
 const App = props => (
   <div>
@@ -56,7 +56,7 @@ App.defaultProps = {
   edges: [],
   start: null,
   goal: null,
-  path: [],
-}
+  path: []
+};
 
 export default App;
