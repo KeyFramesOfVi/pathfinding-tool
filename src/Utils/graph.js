@@ -1,22 +1,20 @@
-import {
-  isPathObstructed,
-  isWithinBorders,
-  getNodeID,
-} from './graph_utils';
-import {
-  getEuclidianDistance,
-} from './common_utils';
+import { isPathObstructed, isWithinBorders, getNodeID } from "./graph_utils";
+import { getEuclidianDistance } from "./common_utils";
 
-const populateNeighbors = (nodes, length, height, proximity, walls) => (
-  nodes.map((node) => {
+const populateNeighbors = (nodes, length, height, proximity, walls) =>
+  nodes.map(node => {
     const neighbors = [];
-    for (let x = (node.x - proximity); x <= node.x + proximity; x += proximity) {
-      for (let y = (node.y - proximity);
+    for (let x = node.x - proximity; x <= node.x + proximity; x += proximity) {
+      for (
+        let y = node.y - proximity;
         y <= node.y + proximity;
-        y += proximity) {
+        y += proximity
+      ) {
         if (!(x === node.x && y === node.y)) {
-          if (isWithinBorders(x, y, length, height) &&
-             !isPathObstructed(node.x, node.y, x, y, walls)) {
+          if (
+            isWithinBorders(x, y, length, height) &&
+            !isPathObstructed(node.x, node.y, x, y, walls)
+          ) {
             const id = getNodeID(x, y, nodes);
             if (id !== -1) {
               neighbors.push(id);
@@ -26,8 +24,7 @@ const populateNeighbors = (nodes, length, height, proximity, walls) => (
       }
     }
     return { ...node, neighbors };
-  })
-);
+  });
 
 const createNode = (id, x, y) => ({
   id,
@@ -43,16 +40,15 @@ const createNode = (id, x, y) => ({
   parent: null,
   next: null,
   support: null,
-  open: false,
+  open: false
 });
-
 
 const createNodes = (length, height, proximity, walls) => {
   const l = length;
   const h = height;
   const p = proximity;
-  const xExcess = (l % p) === 0 ? p : l % p;
-  const yExcess = (h % p) === 0 ? p : h % p;
+  const xExcess = l % p === 0 ? p : l % p;
+  const yExcess = h % p === 0 ? p : h % p;
 
   const nodes = [];
   let index = 0;
@@ -65,40 +61,41 @@ const createNodes = (length, height, proximity, walls) => {
   return populateNeighbors(nodes, length, height, proximity, walls);
 };
 
-const isEdge = (currentEdge, edges) => (
-  edges.some(edge => (
-    ((currentEdge.from === edge.from && currentEdge.to === edge.to) ||
-     (currentEdge.from === edge.to && currentEdge.to === edge.from))
-  ))
-);
+const isEdge = (currentEdge, edges) =>
+  edges.some(
+    edge =>
+      (currentEdge.from === edge.from && currentEdge.to === edge.to) ||
+      (currentEdge.from === edge.to && currentEdge.to === edge.from)
+  );
 
 const createEdge = (to, from, cost) => ({
   to,
   from,
-  cost,
+  cost
 });
 
 const populateNodeEdges = (nodes, edges) => {
   const _nodes = nodes;
-  _nodes.forEach((node) => {
+  _nodes.forEach(node => {
     const _node = node;
-    node.neighbors.forEach((neighbor) => {
+    node.neighbors.forEach(neighbor => {
       const currNeighbor = _nodes[neighbor];
       const edge = getEdge(_node, currNeighbor, edges);
       if (edge) {
         _node.nodeEdges = [...new Set([...node.nodeEdges, edge])];
-        currNeighbor.nodeEdges = [...new Set([...currNeighbor.nodeEdges, edge])];
+        currNeighbor.nodeEdges = [
+          ...new Set([...currNeighbor.nodeEdges, edge])
+        ];
       }
     });
   });
   return _nodes;
 };
 
-
-const createEdges = (nodes) => {
+const createEdges = nodes => {
   const edges = [];
-  nodes.forEach((node) => {
-    node.neighbors.forEach((neighbor) => {
+  nodes.forEach(node => {
+    node.neighbors.forEach(neighbor => {
       const currNeighbor = nodes[neighbor];
       const edge = createEdge(node.id, currNeighbor.id, 0);
       if (!isEdge(edge, edges)) {
@@ -106,7 +103,7 @@ const createEdges = (nodes) => {
           node.x,
           node.y,
           currNeighbor.x,
-          currNeighbor.y,
+          currNeighbor.y
         );
         let multiplier = 1;
         if (node.inBuffer) {
@@ -123,12 +120,12 @@ const createEdges = (nodes) => {
   return edges;
 };
 
-const getEdge = (nodeA, nodeB, edges) => (
-  edges.find(edge => (
-    (edge.to === nodeA.id && edge.from === nodeB.id) ||
-    (edge.from === nodeA.id && edge.to === nodeB.id)
-  )) || null
-);
+const getEdge = (nodeA, nodeB, edges) =>
+  edges.find(
+    edge =>
+      (edge.to === nodeA.id && edge.from === nodeB.id) ||
+      (edge.from === nodeA.id && edge.to === nodeB.id)
+  ) || null;
 
 /* Create Wall Functions */
 const initBuffers = (x1, y1, x2, y2, bufferSize) => {
@@ -164,32 +161,32 @@ const initBuffers = (x1, y1, x2, y2, bufferSize) => {
       p1x,
       p1y,
       p2x,
-      p2y,
+      p2y
     },
     {
       p2x,
       p2y,
       p3x,
-      p3y,
+      p3y
     },
     {
       p3x,
       p3y,
       p4x,
-      p4y,
+      p4y
     },
     {
       p4x,
       p4y,
       p1x,
-      p1y,
-    },
+      p1y
+    }
   ];
 };
 
 const createWall = (firstX, firstY, secondX, secondY, bufferSize) => {
   let x1, y1, x2, y2;
-  if ((firstX < secondX) || (firstX === secondX) && (firstY < secondY)) {
+  if (firstX < secondX || (firstX === secondX && firstY < secondY)) {
     x1 = firstX;
     y1 = firstY;
     x2 = secondX;
@@ -209,17 +206,18 @@ const createWall = (firstX, firstY, secondX, secondY, bufferSize) => {
     p2y: y2 + bufferSize,
     p3x: x2 + bufferSize,
     p4y: y1 - bufferSize,
-    buffers: initBuffers(x1, y1, x2, y2, bufferSize),
+    buffers: initBuffers(x1, y1, x2, y2, bufferSize)
   };
 };
 
-
-const updateDisplayWallBuffer = (walls) => {
-  walls.forEach((wall) => {
-    wall.buffers.filter(buffer => (
-      !isWithinBorders(buffer.x0, buffer.y0) && !isWithinBorders(buffer.x1, buffer.y1)
-        && !isPathObstructed(buffer.x0, buffer.y0, buffer.x1, buffer.y1, walls)
-    ));
+const updateDisplayWallBuffer = walls => {
+  walls.forEach(wall => {
+    wall.buffers.filter(
+      buffer =>
+        !isWithinBorders(buffer.x0, buffer.y0) &&
+        !isWithinBorders(buffer.x1, buffer.y1) &&
+        !isPathObstructed(buffer.x0, buffer.y0, buffer.x1, buffer.y1, walls)
+    );
   });
 };
 
@@ -233,5 +231,5 @@ export {
   getEdge,
   initBuffers,
   createWall,
-  updateDisplayWallBuffer,
+  updateDisplayWallBuffer
 };

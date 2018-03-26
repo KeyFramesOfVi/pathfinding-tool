@@ -3,14 +3,16 @@
 const smallCost = 1;
 const diagCost = Math.sqrt(2 * smallCost * smallCost);
 
-const getEuclidianDistance = (x0, y0, x1, y1) => (
-  Math.sqrt(((x0 - x1) ** 2) + ((y0 - y1) ** 2))
-);
+const getEuclidianDistance = (x0, y0, x1, y1) =>
+  Math.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2);
 
 const octileHeuristic = (nodeA, nodeB) => {
   const dx = Math.abs(nodeA.x - nodeB.x);
   const dy = Math.abs(nodeA.y - nodeB.y);
-  return Math.min(dx, dy) * diagCost + (Math.max(dx, dy) - Math.min(dx, dy)) * smallCost;
+  return (
+    Math.min(dx, dy) * diagCost +
+    (Math.max(dx, dy) - Math.min(dx, dy)) * smallCost
+  );
 };
 
 const compare = (a, b) => {
@@ -83,5 +85,5 @@ export {
   octileHeuristic,
   compare,
   pushUpdateF,
-  pushUpdateH,
+  pushUpdateH
 };

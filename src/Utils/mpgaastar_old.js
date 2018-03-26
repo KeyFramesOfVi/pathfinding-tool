@@ -1,11 +1,11 @@
-import { getEdge } from './graph';
+import { getEdge } from "./graph";
 import {
   getEuclidianDistance,
   octileHeuristic,
   compare,
   pushUpdateF,
-  pushUpdateH,
-} from './common_utils';
+  pushUpdateH
+} from "./common_utils";
 
 /*
  * @param{Node} node some description
@@ -21,16 +21,16 @@ const reinitNodeCost = (node, counter) => {
   node.search = counter;
 
   return node;
-}
+};
 
-const initializeState = (s) => {
-  const node = {...s};
+const initializeState = s => {
+  const node = { ...s };
   if (node.search !== this.counter) {
     node.g = Number.MAX_VALUE;
   }
   node.search = this.counter;
   return node;
-}
+};
 
 // jlc
 /*
@@ -39,26 +39,25 @@ const initializeState = (s) => {
 const goalCondition = (current, goal) => {
   let _current = current;
   while (
-    _current.next !== null && (
-      _current.h === _current.next.h +
-      getCostTo(_current, _current.next)
-    )
+    _current.next !== null &&
+    _current.h === _current.next.h + getCostTo(_current, _current.next)
   ) {
     _current = _current.next;
   }
 
   return _current === goal;
-}
+};
 
-const goalCondition = (current) => {
+const goalCondition = current => {
   let node = current;
-  while (node.next !== null && node.h === node.next.h +
-    this.getCostTo(node, node.next)) {
+  while (
+    node.next !== null &&
+    node.h === node.next.h + this.getCostTo(node, node.next)
+  ) {
     node = node.next;
   }
   return node === this.state.goal;
-}
-
+};
 
 // start
 // open
@@ -66,10 +65,9 @@ const goalCondition = (current) => {
 const Astar = (nodes, start, goal) => {
   const open = new PriorityQueue({ comparator: compare });
   const closed = [];
-  
+
   // start = initializeState(start);
-  start.search = 
-  start.g = 0;
+  start.search = start.g = 0;
   start.h = octileHeuristic(start, goal);
   start.f = start.g + start.h;
   start.priority = start.f;
@@ -82,17 +80,16 @@ const Astar = (nodes, start, goal) => {
         goal,
         open,
         closed,
-        nodes,
+        nodes
       });
       return current;
     }
 
     closed.push(current);
-    current.neighbors.map((neighbor) => {
+    current.neighbors.map(neighbor => {
       const newNeighbor = neighbor;
       newNeighbor = initializeState(newNeighbor);
       if (newNeighbor.g > current.g + getCostTo(current, newNeighbor)) {
-
       }
       newNeighbor.h = octileHeuristic(newNeighbor, this.goal);
       newNeighbor.f = newNeighbor.g + newNeighbor.h;
@@ -104,15 +101,15 @@ const Astar = (nodes, start, goal) => {
     });
   }
   return null;
-}
+};
 
-const buildPath = (current) => {
+const buildPath = current => {
   let node = current;
   while (node !== this.start) {
     node.parent.next = node;
     node = node.parent;
   }
-}
+};
 
 const updateCost = (from, to) => {
   const current = from;
@@ -126,7 +123,12 @@ const updateCost = (from, to) => {
   }
   const edgeIndex = getEdge(current, neighbor, this.state.edges);
 
-  const distCost = getEuclidianDistance(current.x, current.y, neighbor.x, neighbor.y);
+  const distCost = getEuclidianDistance(
+    current.x,
+    current.y,
+    neighbor.x,
+    neighbor.y
+  );
   let multiplier = 1;
   if (current.inBuffer) {
     multiplier += 2;
@@ -136,13 +138,13 @@ const updateCost = (from, to) => {
   }
   edges[edgeIndex].cost = multiplier * distCost;
   this.setState({
-    edges,
+    edges
   });
   return distCost;
-}
+};
 
 const update = (current, decreasedEdges) => {
-  current.neighbors.forEach((neighbor) => {
+  current.neighbors.forEach(neighbor => {
     const currNeighbor = neighbor;
     const oldCost = getEdge(current, currNeighbor, this.edges).cost;
     const newCost = this.updateCost(current, currNeighbor);
@@ -153,7 +155,7 @@ const update = (current, decreasedEdges) => {
       costChange = true;
     }
   });
-}
+};
 
 const observe = (current, nodes) => {
   const sensorRange = VISION_SENSOR / this.state.proximity;
@@ -165,10 +167,10 @@ const observe = (current, nodes) => {
   const node = current;
   for (let y = 0; y <= sensorRange; y += 1) {
     for (let x = 0; x <= sensorRange; x += 1) {
-      const up = node.id + (y * vertical);
-      const down = node.id - (y * vertical);
-      const left = node.id + (x * horizontal);
-      const right = node.id + (x * horizontal);
+      const up = node.id + y * vertical;
+      const down = node.id - y * vertical;
+      const left = node.id + x * horizontal;
+      const right = node.id + x * horizontal;
       if (up > 0 && up < this.nodes.length) {
         this.update(nodes[up], decreasedEdges);
       }
@@ -188,14 +190,14 @@ const observe = (current, nodes) => {
     this.reestablishConsistency(decreasedEdges);
   }
   return costChange;
-}
+};
 
-const reestablishConsistency = (decreasedEdges) => {
+const reestablishConsistency = decreasedEdges => {
   const open = this.state.open;
   while (open.length !== 0) {
     open.dequeue();
   }
-  decreasedEdges.forEach((decreasedEdge) => {
+  decreasedEdges.forEach(decreasedEdge => {
     this.insertState(decreasedEdge[0], decreasedEdge[1], open);
   });
   while (open.length !== 0) {
@@ -203,29 +205,30 @@ const reestablishConsistency = (decreasedEdges) => {
     if (current.support.next !== null) {
       current.next = current.support;
     }
-    current.neighbors.forEach((neighbor) => {
+    current.neighbors.forEach(neighbor => {
       const currNeighbor = this.state.nodes[neighbor];
       this.insertState(current, currNeighbor, open);
     });
   }
   this.setState({
-    open,
-  })
-}
+    open
+  });
+};
 
 const startPath = () => {
   const start = this.state.start;
-  const nodes = this.state.nodes.map(node => (
-    { ...node, h: octileHeuristic(start, this.state.goal) }
-  ));
+  const nodes = this.state.nodes.map(node => ({
+    ...node,
+    h: octileHeuristic(start, this.state.goal)
+  }));
 
   this.observe(start, nodes);
   this.setState({
     start,
-    nodes,
+    nodes
   });
   this.createAPath();
-}
+};
 
 const createAPath = () => {
   let counter = this.state.counter;
@@ -234,17 +237,18 @@ const createAPath = () => {
   if (current === null) {
     return false;
   }
-  const closed = this.state.closed.map(node => (
-    { ...node, h: (current.g + current.h) - node.g }
-  ));
+  const closed = this.state.closed.map(node => ({
+    ...node,
+    h: current.g + current.h - node.g
+  }));
   this.buildPath(current);
   this.setState({
     counter,
-    closed,
+    closed
   });
-}
+};
 
-const nextStep = (start, path, nodes) => {  
+const nextStep = (start, path, nodes) => {
   const t = start;
   path.push(start.id);
   start = start.next;
@@ -253,11 +257,9 @@ const nextStep = (start, path, nodes) => {
   this.setState({
     start,
     path,
-    change,
+    change
   });
-}
-
-
+};
 
 /*
 createPath(start, goal) {
@@ -302,4 +304,4 @@ const insertState = (current, next, pq) => {
     node.support = next;
     pushUpdateH(pq, node);
   }
-}
+};

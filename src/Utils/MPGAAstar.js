@@ -1,21 +1,20 @@
-import { getEdge } from './graph';
-import { getCostTo, isPointInBuffer } from './graph_utils';
+import { getEdge } from "./graph";
+import { getCostTo, isPointInBuffer } from "./graph_utils";
 import {
   getEuclidianDistance,
   octileHeuristic,
   compare,
   pushUpdateF,
-  pushUpdateH,
-} from './common_utils';
+  pushUpdateH
+} from "./common_utils";
 
-const PriorityQueue = require('fastpriorityqueue');
+const PriorityQueue = require("fastpriorityqueue");
 
 const VISION_SENSOR = 90;
 let costChange = false;
 
 let open = new PriorityQueue(compare);
 let closedList = [];
-
 
 let HEIGHT = 0;
 let PROXIMITY = 0;
@@ -30,8 +29,10 @@ const initializeState = (s, counter) => {
 
 const goalCondition = (current, goal) => {
   let node = current;
-  while (node.next !== null && node.h === node.next.h +
-    getCostTo(node, node.next)) {
+  while (
+    node.next !== null &&
+    node.h === node.next.h + getCostTo(node, node.next)
+  ) {
     node = node.next;
   }
   return node === goal;
@@ -55,7 +56,7 @@ const Astar = (nodes, start, goal, counter) => {
       return current;
     }
     closedList.push(current);
-    current.neighbors.forEach((neighbor) => {
+    current.neighbors.forEach(neighbor => {
       const currNeighbor = nodes[neighbor];
       initializeState(currNeighbor, counter);
       if (currNeighbor.g > current.g + getCostTo(current, currNeighbor)) {
@@ -90,7 +91,12 @@ const updateCost = (from, to, edges, walls) => {
     neighbor.inBuffer = true;
   }
   const edge = getEdge(current, neighbor, edges);
-  const distCost = getEuclidianDistance(current.x, current.y, neighbor.x, neighbor.y);
+  const distCost = getEuclidianDistance(
+    current.x,
+    current.y,
+    neighbor.x,
+    neighbor.y
+  );
   let multiplier = 1;
   if (current.inBuffer) {
     multiplier += 20;
@@ -103,7 +109,7 @@ const updateCost = (from, to, edges, walls) => {
 };
 
 const update = (current, decreasedEdges, nodes, edges, walls) => {
-  current.neighbors.forEach((neighbor) => {
+  current.neighbors.forEach(neighbor => {
     const currNeighbor = nodes[neighbor];
     const oldCost = getEdge(current, currNeighbor, edges).cost;
     const newCost = updateCost(current, currNeighbor, edges, walls);
@@ -131,7 +137,7 @@ const reestablishConsistency = (nodes, decreasedEdges, pq) => {
   while (!pq.isEmpty()) {
     pq.poll();
   }
-  decreasedEdges.forEach((decreasedEdge) => {
+  decreasedEdges.forEach(decreasedEdge => {
     insertState(decreasedEdge[0], decreasedEdge[1], pq);
   });
   while (!pq.isEmpty()) {
@@ -139,12 +145,11 @@ const reestablishConsistency = (nodes, decreasedEdges, pq) => {
     if (current.support.next !== null) {
       current.next = current.support;
     }
-    current.neighbors.forEach((neighbor) => {
+    current.neighbors.forEach(neighbor => {
       insertState(current, nodes[neighbor], pq);
     });
   }
 };
-
 
 const observe = (current, nodes, edges, walls) => {
   const sensorRange = VISION_SENSOR / PROXIMITY;
@@ -155,14 +160,14 @@ const observe = (current, nodes, edges, walls) => {
   const node = current;
 
   for (let i = 1; i <= sensorRange; i += 1) {
-    const up = node.id + (i * vertical);
-    const down = node.id - (i * vertical);
-    const left = node.id - (i * horizontal);
-    const right = node.id + (i * horizontal);
-    const upRight = node.id + (i * vertical) + (i * horizontal);
-    const upLeft = node.id + (i * vertical) - (i * horizontal);
-    const downLeft = node.id - (i * vertical) - (i * horizontal);
-    const downRight = node.id - (i * vertical) + (i * horizontal);
+    const up = node.id + i * vertical;
+    const down = node.id - i * vertical;
+    const left = node.id - i * horizontal;
+    const right = node.id + i * horizontal;
+    const upRight = node.id + i * vertical + i * horizontal;
+    const upLeft = node.id + i * vertical - i * horizontal;
+    const downLeft = node.id - i * vertical - i * horizontal;
+    const downRight = node.id - i * vertical + i * horizontal;
     if (up > 0 && up < nodes.length) {
       update(nodes[up], decreasedEdges, nodes, edges, walls);
     }
@@ -232,7 +237,6 @@ const startPath = (hght, prox, nodes, edges, walls, start, goal, counter) => {
   createAPath(nodes, edges, walls, _start, goal, counter);
 };
 
-
 const createPath = (hght, prox, nodes, edges, walls, start, goal) => {
   HEIGHT = hght;
   PROXIMITY = prox;
@@ -259,7 +263,7 @@ const createPath = (hght, prox, nodes, edges, walls, start, goal) => {
       closedList[i].h = current.g + current.h - closedList[i].g;
     }
     buildPath(current, _start);
-    while (!change && (_start !== _goal)) {
+    while (!change && _start !== _goal) {
       const t = _start;
       path.push(_start.id);
       _start = _start.next;
