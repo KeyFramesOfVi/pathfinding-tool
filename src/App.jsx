@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from './Grid';
-import { GridInput } from './GridInput';
-import { StartMenu } from './StartMenu';
+import Grid from './Grid';
+import GridInput from './GridInput';
+import StartMenu from './StartMenu';
 import './App.css';
 
 const App = props => (
@@ -46,7 +46,7 @@ App.propTypes = {
   dragEnd: PropTypes.func.isRequired,
   drop: PropTypes.func.isRequired,
   mouseDown: PropTypes.func.isRequired,
-  mouseUp: PropTypes.fun.isRequired
+  mouseUp: PropTypes.func.isRequired
 };
 
 App.defaultProps = {

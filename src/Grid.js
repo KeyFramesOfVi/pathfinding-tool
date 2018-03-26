@@ -1,6 +1,6 @@
 import React from 'react';
-import { Node } from './Node';
-import { Wall } from './Wall';
+import Node from './Node';
+import Wall from './Wall';
 // import { Agent } from './Agent';
 
 const Grid = props => (
@@ -45,4 +45,4 @@ const Grid = props => (
   </div>
 );
 
-export { Grid };
+export default Grid;

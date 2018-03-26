@@ -41,4 +41,4 @@ class GridInput extends Component {
   }
 }
 
-export { GridInput };
+export default GridInput;

@@ -9,7 +9,7 @@ const getTransform = (x1, x2, y1, y2) => (
 )
 
 const Wall = (props) => (
-  <div 
+  <div
     style={{
       'transformOrigin': '0 100%',
       height: '2px',
@@ -23,4 +23,4 @@ const Wall = (props) => (
   />
 )
 
-export { Wall };
+export default Wall;

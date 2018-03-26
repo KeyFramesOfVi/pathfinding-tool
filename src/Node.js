@@ -1,13 +1,12 @@
 import React from 'react';
 
-const Node = (props) => (
+const Node = props => (
   <div
     id={props.id}
     className="state"
     draggable={props.start || props.goal ? 'true' : 'none'}
     onDragStart={props.dragStart}
     onDragEnter={props.dragEnter}
-    onDragOver={(event) => { event.preventDefault(); }}
     onMouseDown={() => false}
     style={{
       position: 'absolute',
@@ -24,10 +23,10 @@ const Node = (props) => (
       opacity: 0.8,
       borderStyle: 'dotted',
       borderWidth: '1px',
-      userDrag: 'none', 
+      userDrag: 'none',
       userSelect: 'none',
     }}
   />
 );
 
-export { Node };
+export default Node;

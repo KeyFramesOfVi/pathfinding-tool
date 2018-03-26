@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-import { App } from "./App";
+import App from "./App";
 
 import {
   startPath,
@@ -16,12 +16,6 @@ let yStart = 0;
 class AppContainer extends Component {
   constructor(props) {
     super(props);
-
-    this.dragStart = this.dragStart.bind(this);
-    this.dragOver = this.dragOver.bind(this);
-    this.dragEnter = this.dragEnter.bind(this);
-    this.mouseDown = this.mouseDown.bind(this);
-    this.mouseUp = this.mouseUp.bind(this);
   }
 
   mouseDown = event => {
