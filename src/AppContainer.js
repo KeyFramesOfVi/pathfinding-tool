@@ -1,31 +1,17 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import { connect } from "react-redux";
 
-import { App } from './App';
+import { App } from "./App";
 
 import {
   startPath,
   createAPath,
   observePath,
-  createPath,
-} from './Utils/MPGAAstar';
+  createPath
+} from "./Utils/MPGAAstar";
 
 let xStart = 0;
 let yStart = 0;
-
-
-// const length = 602;
-// const height = 538;
-// const proximity = 30;
-// const bufferSize = 30;
-// const {
-//   nodes,
-//   edges,
-//   walls,
-// } = createGraph(length, height);
-// const start = nodes[2];
-// const goal = nodes[310];
-// const path = createPath(height, proximity, nodes, edges, walls, start, goal);
 
 class AppContainer extends Component {
   constructor(props) {
@@ -38,14 +24,13 @@ class AppContainer extends Component {
     this.mouseUp = this.mouseUp.bind(this);
   }
 
-  mouseDown(event) {
+  mouseDown = event => {
     xStart = event.clientX;
     yStart = event.clientY;
-    console.log(`xBegin: ${xStart} yBegin:${yStart}`);
   }
 
-  mouseUp(event) {
-    if (event.target.className === 'state') {
+  mouseUp = event => {
+    if (event.target.className === "state") {
       const xEnd = event.clientX;
       const yEnd = event.clientY;
       const xDiff = Math.abs(xStart - xEnd);
@@ -57,49 +42,57 @@ class AppContainer extends Component {
       }
     }
   }
-  dragStart(event) {
+  dragStart = event => {
     const img = new Image();
     if (this.props.nodes[event.target.id] === this.props.start) {
-      event.dataTransfer.setData('text/plain', 'start');
+      event.dataTransfer.setData("text/plain", "start");
     } else if (this.props.nodes[event.target.id] === this.props.goal) {
-      event.dataTransfer.setData('text/plain', 'goal');
-    } 
+      event.dataTransfer.setData("text/plain", "goal");
+    }
     event.dataTransfer.setDragImage(img, -99999, -99999);
   }
 
-  dragOver(event) {
+  dragOver = event => {
     event.preventDefault();
-    if (event.target.className === 'state') {
-      event.dataTransfer.dropEffect = 'all';
+    if (event.target.className === "state") {
+      event.dataTransfer.dropEffect = "all";
     } else {
-      event.dataTransfer.dropEffect = 'none';
+      event.dataTransfer.dropEffect = "none";
     }
   }
 
-  dragEnter(event) {
+  dragEnter = event => {
     event.preventDefault();
-    if (event.dataTransfer.getData('text/plain') === 'start') {
-      if (event.target.className === 'state') {
-        this.props.dragEnterStartNode(this.props.nodes, event.target.id, this.props.walls);
+    if (event.dataTransfer.getData("text/plain") === "start") {
+      if (event.target.className === "state") {
+        this.props.dragEnterStartNode(
+          this.props.nodes,
+          event.target.id,
+          this.props.walls
+        );
       }
-    } else if (event.dataTransfer.getData('text/plain') === 'goal') {
-      if (event.target.className === 'state') {
-        this.props.dragEnterGoalNode(this.props.nodes, event.target.id, this.props.walls);
+    } else if (event.dataTransfer.getData("text/plain") === "goal") {
+      if (event.target.className === "state") {
+        this.props.dragEnterGoalNode(
+          this.props.nodes,
+          event.target.id,
+          this.props.walls
+        );
       }
     }
   }
 
-  drop(event) {
+  drop = event => {
     event.preventDefault();
-    if (!event.target.getAttribute('onDrop')) {
+    if (!event.target.getAttribute("onDrop")) {
       return false;
     }
-    console.log(event.target);
-    if (event.target.className === 'grid') {
-      const { xStart, yStart } = JSON.parse(event.dataTransfer.getData('startCoordinates'));
+    if (event.target.className === "grid") {
+      const { xStart, yStart } = JSON.parse(
+        event.dataTransfer.getData("startCoordinates")
+      );
       const xEnd = event.target.tclientX;
       const yEnd = event.target.clientY;
-      console.log(`xStart: ${xStart} yStart: ${yStart} xEnd: ${xEnd} yEnd: ${yEnd}`);
       const xDiff = Math.abs(xStart - xEnd);
       const yDiff = Math.abs(yStart - yEnd);
     }
@@ -127,77 +120,83 @@ class AppContainer extends Component {
         endCreateWall={this.props.endCreateWall}
         createGraph={this.props.createGraph}
         startSearch={this.props.startSearch}
-       />
+      />
     );
   }
 }
 export default connect(
-  state => (
-    {
-      nodes: state.nodes,
-      edges: state.edges,
-      walls: state.walls,
-      length: state.length,
-      height: state.height,
-      start: state.start,
-      goal: state.goal,
-      borders: state.borders,
-      path: state.path,
-      counter: state.counter,
-    }
-  ),
-  dispatch => (
-    {
-      createGraph: (length, height) => dispatch((dispatch, getState) => {
+  state => ({
+    nodes: state.nodes,
+    edges: state.edges,
+    walls: state.walls,
+    length: state.length,
+    height: state.height,
+    start: state.start,
+    goal: state.goal,
+    borders: state.borders,
+    path: state.path,
+    counter: state.counter
+  }),
+  dispatch => ({
+    createGraph: (length, height) =>
+      dispatch((dispatch, getState) => {
         let state = getState();
         dispatch({
-          type: 'CREATE_NODES',
+          type: "CREATE_NODES",
           length,
           height,
           proximity: 30,
-          walls: state.walls,
+          walls: state.walls
         });
         state = getState();
-        dispatch({ type: 'CREATE_EDGES', nodes: state.nodes });
+        dispatch({ type: "CREATE_EDGES", nodes: state.nodes });
         state = getState();
-        dispatch({ type: 'POPULATE_NODE_EDGES', edges: state.edges });
+        dispatch({ type: "POPULATE_NODE_EDGES", edges: state.edges });
         state = getState();
-        dispatch({ type: 'SET_MAP_SIZE', length, height });
+        dispatch({ type: "SET_MAP_SIZE", length, height });
         state = getState();
         dispatch({
-          type: 'SET_BORDERS',
+          type: "SET_BORDERS",
           length,
           height,
-          proximity: 30,
+          proximity: 30
         });
         state = getState();
-        dispatch({ type: 'CREATE_MAP_BORDER', borders: state.borders, bufferSize: 30 });
-        dispatch({ type: 'SET_START', nodes: state.nodes });
-        dispatch({ type: 'SET_GOAL', nodes: state.nodes });
+        dispatch({
+          type: "CREATE_MAP_BORDER",
+          borders: state.borders,
+          bufferSize: 30
+        });
+        dispatch({ type: "SET_START", nodes: state.nodes });
+        dispatch({ type: "SET_GOAL", nodes: state.nodes });
       }),
-      dragEnterStartNode: (nodes, id, walls) => dispatch({
-        type: 'DRAG_ENTER_START_NODE',
+    dragEnterStartNode: (nodes, id, walls) =>
+      dispatch({
+        type: "DRAG_ENTER_START_NODE",
         nodes,
         id,
-        walls,
+        walls
       }),
-      dragEnterGoalNode: (nodes, id, walls) => dispatch({
-        type: 'DRAG_ENTER_GOAL_NODE',
+    dragEnterGoalNode: (nodes, id, walls) =>
+      dispatch({
+        type: "DRAG_ENTER_GOAL_NODE",
         nodes,
         id,
-        walls,
+        walls
       }),
 
-      createWall: (x1, y1, x2, y2) => dispatch({
-        type: 'CREATE_WALL',
+    createWall: (x1, y1, x2, y2) =>
+      dispatch({
+        type: "CREATE_WALL",
         x1,
         y1,
         x2,
         y2,
-        bufferSize: 30,
+        bufferSize: 30
       }),
 
-      startSearch: () => dispatch((dispatch, getState) => {
+    startSearch: () =>
+      dispatch((dispatch, getState) => {
         const state = getState();
         const {
           height,
@@ -205,7 +204,7 @@ export default connect(
           edges,
           walls,
           start,
-          goal,
+          goal
           // path,
           // counter,
         } = state;
@@ -216,15 +215,23 @@ export default connect(
         //     startPath(height, 30, nodes, edges, walls, start, goal, path, )
         //   }
         // }
-        const path = createPath(height, 30, nodes, edges, walls, start, goal, path);
-        dispatch({
-          type: 'CREATE_PATH',
+        const path = createPath(
+          height,
+          30,
           nodes,
           edges,
           walls,
-          path,
+          start,
+          goal,
+          path
+        );
+        dispatch({
+          type: "CREATE_PATH",
+          nodes,
+          edges,
+          walls,
+          path
         });
-      }),
-    }
-  ),
+      })
+  })
 )(AppContainer);
