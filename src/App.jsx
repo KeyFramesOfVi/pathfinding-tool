@@ -1,9 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Grid from "./Grid";
-import GridInput from "./GridInput";
-import StartMenu from "./StartMenu";
-import "./App.css";
+import React from 'react'
+import PropTypes from 'prop-types'
+import Grid from './Grid'
+import GridInput from './GridInput'
+import StartMenu from './StartMenu'
+import './App.css'
 
 const App = props => (
   <div>
@@ -19,8 +19,6 @@ const App = props => (
       allowDrop={props.allowDrop}
       dragStart={props.dragStart}
       dragEnter={props.dragEnter}
-      dragOver={props.dragOver}
-      dragEnd={props.dragEnd}
       drop={props.drop}
       mouseDown={props.mouseDown}
       mouseUp={props.mouseUp}
@@ -28,7 +26,7 @@ const App = props => (
     <GridInput createGraph={props.createGraph} />
     <StartMenu startSearch={props.startSearch} />
   </div>
-);
+)
 
 App.propTypes = {
   length: PropTypes.number,
@@ -42,21 +40,10 @@ App.propTypes = {
   allowDrop: PropTypes.func.isRequired,
   dragStart: PropTypes.func.isRequired,
   dragEnter: PropTypes.func.isRequired,
-  dragOver: PropTypes.func.isRequired,
-  dragEnd: PropTypes.func.isRequired,
   drop: PropTypes.func.isRequired,
   mouseDown: PropTypes.func.isRequired,
-  mouseUp: PropTypes.func.isRequired
-};
-
-App.defaultProps = {
-  length: 0,
-  walls: [],
-  nodes: [],
-  edges: [],
-  start: null,
-  goal: null,
-  path: []
-};
-
-export default App;
+  mouseUp: PropTypes.func.isRequired,
+  createGraph : PropTypes.func.isRequired,
+  startSearch : PropTypes.func.isRequired
+}
+export default App

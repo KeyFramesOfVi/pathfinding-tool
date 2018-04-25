@@ -1,19 +1,24 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 class StartMenu extends Component {
   render() {
     return (
-      <div style={{ float: "right" }}>
+      <div style={{ float: 'right' }}>
         <button
-          onClick={evt => {
-            this.props.startSearch();
+          onClick={() => {
+            this.props.startSearch()
           }}
         >
           Start Search
         </button>
       </div>
-    );
+    )
   }
 }
 
-export default StartMenu;
+StartMenu.propTypes = {
+  startSearch : PropTypes.func.isRequired
+}
+
+export default StartMenu

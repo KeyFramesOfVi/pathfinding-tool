@@ -1,14 +1,20 @@
-import { createWall } from '../../Utils/graph';
+import { createWall } from '../../Utils/graph'
 
 
 export default (state = [], action) => {
   if (action.type === 'CREATE_MAP_BORDER') {
-    const {
-      x1,
-      y1,
-      x2,
-      y2,
-    } = action.borders;
+    /* There should initially be walls bordering the space itself and
+       nothing else, but I am currently still running a proof of concept
+       and am creating a default graph
+    */
+
+    // const {
+    //   x1,
+    //   y1,
+    //   x2,
+    //   y2,
+    // } = action.borders
+    
     return [
       createWall(1, 14, 632, 14, action.bufferSize),
       createWall(1, 14, 1, 555, action.bufferSize),
@@ -22,7 +28,8 @@ export default (state = [], action) => {
       createWall(315, 336, 520, 336, action.bufferSize),
       createWall(315, 206, 422, 206, action.bufferSize),
       createWall(422, 14, 422, 206, action.bufferSize),
-    ];
+    ]
+
     // return [
     //   createWall(x1, y1, x2, y1, action.bufferSize),
     //   createWall(x1, y1, x1, y2, action.bufferSize),
@@ -36,10 +43,10 @@ export default (state = [], action) => {
       action.x2,
       action.y2,
       action.bufferSize,
-    )];
+    )]
   } else if (action.type === 'CREATE_PATH') {
-    return action.walls;
+    return action.walls
   }
 
-  return state;
-};
+  return state
+}

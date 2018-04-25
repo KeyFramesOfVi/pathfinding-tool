@@ -1,94 +1,70 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
-import App from "./App";
+import App from './App'
 
 import {
-  startPath,
-  createAPath,
-  observePath,
+  // startPath,
+  // createAPath,
+  // observePath,
   createPath
-} from "./Utils/MPGAAstar";
+} from './Utils/MPGAAstar'
 
-let xStart = 0;
-let yStart = 0;
+let xStart = 0
+let yStart = 0
 
 class AppContainer extends Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   mouseDown = event => {
-    xStart = event.clientX;
-    yStart = event.clientY;
+    xStart = event.clientX
+    yStart = event.clientY
   };
 
   mouseUp = event => {
-    if (event.target.className === "state") {
-      const xEnd = event.clientX;
-      const yEnd = event.clientY;
-      const xDiff = Math.abs(xStart - xEnd);
-      const yDiff = Math.abs(yStart - yEnd);
+    if (event.target.className === 'state') {
+      const xEnd = event.clientX
+      const yEnd = event.clientY
+      const xDiff = Math.abs(xStart - xEnd)
+      const yDiff = Math.abs(yStart - yEnd)
       if (xDiff < yDiff) {
-        this.props.createWall(xStart, yStart, xStart, yEnd);
+        this.props.createWall(xStart, yStart, xStart, yEnd)
       } else {
-        this.props.createWall(xStart, yStart, xEnd, yStart);
+        this.props.createWall(xStart, yStart, xEnd, yStart)
       }
     }
   };
   dragStart = event => {
-    const img = new Image();
+    const img = new Image()
     if (this.props.nodes[event.target.id] === this.props.start) {
-      event.dataTransfer.setData("text/plain", "start");
+      event.dataTransfer.setData('text/plain', 'start')
     } else if (this.props.nodes[event.target.id] === this.props.goal) {
-      event.dataTransfer.setData("text/plain", "goal");
+      event.dataTransfer.setData('text/plain', 'goal')
     }
-    event.dataTransfer.setDragImage(img, -99999, -99999);
-  };
-
-  dragOver = event => {
-    event.preventDefault();
-    if (event.target.className === "state") {
-      event.dataTransfer.dropEffect = "all";
-    } else {
-      event.dataTransfer.dropEffect = "none";
-    }
+    event.dataTransfer.setDragImage(img, -99999, -99999)
   };
 
   dragEnter = event => {
-    event.preventDefault();
-    if (event.dataTransfer.getData("text/plain") === "start") {
-      if (event.target.className === "state") {
+    event.preventDefault()
+    if (event.dataTransfer.getData('text/plain') === 'start') {
+      if (event.target.className === 'state') {
         this.props.dragEnterStartNode(
           this.props.nodes,
           event.target.id,
           this.props.walls
-        );
+        )
       }
-    } else if (event.dataTransfer.getData("text/plain") === "goal") {
-      if (event.target.className === "state") {
+    } else if (event.dataTransfer.getData('text/plain') === 'goal') {
+      if (event.target.className === 'state') {
         this.props.dragEnterGoalNode(
           this.props.nodes,
           event.target.id,
           this.props.walls
-        );
+        )
       }
-    }
-  };
-
-  drop = event => {
-    event.preventDefault();
-    if (!event.target.getAttribute("onDrop")) {
-      return false;
-    }
-    if (event.target.className === "grid") {
-      const { xStart, yStart } = JSON.parse(
-        event.dataTransfer.getData("startCoordinates")
-      );
-      const xEnd = event.target.tclientX;
-      const yEnd = event.target.clientY;
-      const xDiff = Math.abs(xStart - xEnd);
-      const yDiff = Math.abs(yStart - yEnd);
     }
   };
 
@@ -115,9 +91,44 @@ class AppContainer extends Component {
         createGraph={this.props.createGraph}
         startSearch={this.props.startSearch}
       />
-    );
+    )
   }
 }
+
+AppContainer.propTypes = {
+  length: PropTypes.number,
+  height: PropTypes.number,
+  walls: PropTypes.array,
+  nodes: PropTypes.array,
+  edges: PropTypes.array,
+  start: PropTypes.object,
+  goal: PropTypes.object,
+  path: PropTypes.array,
+  allowDrop: PropTypes.func.isRequired,
+  dragStart: PropTypes.func.isRequired,
+  dragEnter: PropTypes.func.isRequired,
+  drop: PropTypes.func.isRequired,
+  mouseDown: PropTypes.func.isRequired,
+  mouseUp: PropTypes.func.isRequired,
+  createGraph : PropTypes.func.isRequired,
+  startSearch : PropTypes.func.isRequired,
+  createWall : PropTypes.func.isRequired,
+  startCreateWall : PropTypes.func.isRequired,
+  endCreateWall : PropTypes.func.isRequired,
+  dragEnterStartNode : PropTypes.func.isRequired,
+  dragEnterGoalNode : PropTypes.func.isRequired
+}
+
+AppContainer.defaultProps = {
+  length: 0,
+  walls: [],
+  nodes: [],
+  edges: [],
+  start: null,
+  goal: null,
+  path: []
+}
+
 export default connect(
   state => ({
     nodes: state.nodes,
@@ -134,46 +145,46 @@ export default connect(
   dispatch => ({
     createGraph: (length, height) =>
       dispatch((dispatch, getState) => {
-        let state = getState();
+        let state = getState()
         dispatch({
-          type: "CREATE_NODES",
+          type: 'CREATE_NODES',
           length,
           height,
           proximity: 30,
           walls: state.walls
-        });
-        state = getState();
-        dispatch({ type: "CREATE_EDGES", nodes: state.nodes });
-        state = getState();
-        dispatch({ type: "POPULATE_NODE_EDGES", edges: state.edges });
-        state = getState();
-        dispatch({ type: "SET_MAP_SIZE", length, height });
-        state = getState();
+        })
+        state = getState()
+        dispatch({ type: 'CREATE_EDGES', nodes: state.nodes })
+        state = getState()
+        dispatch({ type: 'POPULATE_NODE_EDGES', edges: state.edges })
+        state = getState()
+        dispatch({ type: 'SET_MAP_SIZE', length, height })
+        state = getState()
         dispatch({
-          type: "SET_BORDERS",
+          type: 'SET_BORDERS',
           length,
           height,
           proximity: 30
-        });
-        state = getState();
+        })
+        state = getState()
         dispatch({
-          type: "CREATE_MAP_BORDER",
+          type: 'CREATE_MAP_BORDER',
           borders: state.borders,
           bufferSize: 30
-        });
-        dispatch({ type: "SET_START", nodes: state.nodes });
-        dispatch({ type: "SET_GOAL", nodes: state.nodes });
+        })
+        dispatch({ type: 'SET_START', nodes: state.nodes })
+        dispatch({ type: 'SET_GOAL', nodes: state.nodes })
       }),
     dragEnterStartNode: (nodes, id, walls) =>
       dispatch({
-        type: "DRAG_ENTER_START_NODE",
+        type: 'DRAG_ENTER_START_NODE',
         nodes,
         id,
         walls
       }),
     dragEnterGoalNode: (nodes, id, walls) =>
       dispatch({
-        type: "DRAG_ENTER_GOAL_NODE",
+        type: 'DRAG_ENTER_GOAL_NODE',
         nodes,
         id,
         walls
@@ -181,7 +192,7 @@ export default connect(
 
     createWall: (x1, y1, x2, y2) =>
       dispatch({
-        type: "CREATE_WALL",
+        type: 'CREATE_WALL',
         x1,
         y1,
         x2,
@@ -191,24 +202,14 @@ export default connect(
 
     startSearch: () =>
       dispatch((dispatch, getState) => {
-        const state = getState();
         const {
           height,
           nodes,
           edges,
           walls,
           start,
-          goal
-          // path,
-          // counter,
-        } = state;
-        // let finished = false;
-        // while (!finished) {
-        //   let notStarted = true;
-        //   if (notStarted) {
-        //     startPath(height, 30, nodes, edges, walls, start, goal, path, )
-        //   }
-        // }
+          goal,
+        } = getState()
         const path = createPath(
           height,
           30,
@@ -218,14 +219,14 @@ export default connect(
           start,
           goal,
           path
-        );
+        )
         dispatch({
-          type: "CREATE_PATH",
+          type: 'CREATE_PATH',
           nodes,
           edges,
           walls,
           path
-        });
+        })
       })
   })
-)(AppContainer);
+)(AppContainer)
