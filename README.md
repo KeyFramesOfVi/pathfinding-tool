@@ -10,6 +10,8 @@ If you want to see it work for Multipath Generated Adaptive A* (MPGAA*), the alg
 
 ## To-do List
 * Erase "Observed" Node List whenever a user does a new search, since it currently keeps old information.
+* Add a "FAIL" update when the algorithm cannot reach the Goal.
+* Center the board
 * Add a "History" object that saves every state the agent makes from the beginning of the application until it reaches (or fails to reach) the goal.
 * Add a "animate" button that plays the history and renders all state from start to finish under a set interval, in order to show how the algorithm plans during every step.
 * Add the ability to draw walls and obstructions during this animate phase, so that the robot can discard all of it's planning up to that point and replan around the changing world. This will really display the strengths of dynamic algorithms, which I feel are never really shown in full light.
