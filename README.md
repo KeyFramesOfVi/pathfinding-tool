@@ -1,6 +1,6 @@
 ## Dynamic Pathfinding Tool
 
-A tool to hopefully alleviate the task of creating 
+A tool to hopefully alleviate the task of creating a world for robotic agents when trying to test their ability to navigate a dynamically changing world, with little to no information about that world.
 
 This is currently a WiP application that I have some hard coded inputs for (Such as the walls). I can generate my own walls manually but I have it set up like this so that I can test easier.
 
